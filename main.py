@@ -1,3 +1,26 @@
+""""
+
+LLLLLLLLLLL                  UUUUUUUU     UUUUUUUU     NNNNNNNN        NNNNNNNN
+L:::::::::L                  U::::::U     U::::::U     N:::::::N       N::::::N
+L:::::::::L                  U::::::U     U::::::U     N::::::::N      N::::::N
+LL:::::::LL                  UU:::::U     U:::::UU     N:::::::::N     N::::::N
+  L:::::L                     U:::::U     U:::::U      N::::::::::N    N::::::N                  uuuuuu    uuuuuu         aaaaaaaaaaaaa
+  L:::::L                     U:::::D     D:::::U      N:::::::::::N   N::::::N                  u::::u    u::::u         a::::::::::::a
+  L:::::L                     U:::::D     D:::::U      N:::::::N::::N  N::::::N                  u::::u    u::::u         aaaaaaaaa:::::a
+  L:::::L                     U:::::D     D:::::U      N::::::N N::::N N::::::N                  u::::u    u::::u                  a::::a
+  L:::::L                     U:::::D     D:::::U      N::::::N  N::::N:::::::N                  u::::u    u::::u           aaaaaaa:::::a
+  L:::::L                     U:::::D     D:::::U      N::::::N   N:::::::::::N                  u::::u    u::::u         aa::::::::::::a
+  L:::::L                     U:::::D     D:::::U      N::::::N    N::::::::::N                  u::::u    u::::u        a::::aaaa::::::a
+  L:::::L         LLLLLL      U::::::U   U::::::U      N::::::N     N:::::::::N                  u:::::uuuu:::::u       a::::a    a:::::a
+LL:::::::LLLLLLLLL:::::L      U:::::::UUU:::::::U      N::::::N      N::::::::N                  u:::::::::::::::uu     a::::a    a:::::a
+L::::::::::::::::::::::L       UU:::::::::::::UU       N::::::N       N:::::::N      ......       u:::::::::::::::u     a:::::aaaa::::::a
+L::::::::::::::::::::::L         UU:::::::::UU         N::::::N        N::::::N      .::::.        uu::::::::uu:::u      a::::::::::aa:::a
+LLLLLLLLLLLLLLLLLLLLLLLL           UUUUUUUUU           NNNNNNNN         NNNNNNN      ......          uuuuuuuu  uuuu       aaaaaaaaaa  aaaa
+
+https://team.lun.ua/?filtered=vacancies
+
+""""
+
 # -*- coding: utf-8 -*-
 # encoding=utf8
 import sys
@@ -12,7 +35,7 @@ def main():
   #to correct using uft-8
   reload(sys)
   sys.setdefaultencoding('utf8')
-  print ('11111')
+  #main loop
   while True:
       #connection to mySQL
       db = scs.database_connect()
@@ -20,9 +43,7 @@ def main():
       if (scs.check_not_downloaded_status() == False):
           continue
       scope = ['https://www.googleapis.com/auth/webmasters.readonly']
-      print ('HELLO1')
       propertyData = scs.choose_property()
-      print ('HELLO2')
       service_account_email = propertyData[1]
       key_file_location = propertyData[2]
       service = sca.get_service('webmasters', 'v3', scope, key_file_location,
@@ -40,7 +61,7 @@ def main():
           response_page = sca.execute_request(service, property_uri, sca.request_page(endDate, searchType, startRowPage))
           #check if response is empty
           if 'rows' not in response_page:
-              print ('Empty response 1')
+              print ('Empty response. No URLs')
               break
           #creating list of urls to use in 2nd request
           dataPage = sca.parse_table(response_page)
@@ -53,11 +74,10 @@ def main():
           #second request of Queries
           for dataPageRow in dataPage:
               while True:
-                  dataPageRow[0] = "https://flatfy.az/"
                   response = sca.execute_request(service, property_uri,
                                              sca.request_query_by_pages(endDate, searchType, dataPageRow[0], startRowQuery))
                   if 'rows' not in response:
-                      print ('Empty response 2a')
+                      print ('Empty response. No queries for this URL')
                       time.sleep(.1)
                       break
                   dataQuery = sca.parse_table(response)
@@ -85,6 +105,7 @@ def main():
                               #print "MY ERROR 1062: " + e[1]
                               pass  # or may be at least log?
                       db.commit()
+                      #get categories of URLs
                       try:
                           scs.update_category_id(endDate, url, dataQueryRow[0], url_category_id)
                       except:
@@ -104,6 +125,7 @@ def main():
                       startRowQuery = startRowQuery + 5000
                       print ("New start row for URLS")
           db.close()
+          #calendar update
           scs.update_date_status(endDate)
           if len(dataPage) < 5000:
               break
