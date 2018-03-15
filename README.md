@@ -1,6 +1,6 @@
 # SEO Search Console API
 
-![Flatfy Logo](https://github.com/m0r9un/seo-search-console-api/blob/master/logo@2x.png)
+![Flatfy Logo](https://raw.githubusercontent.com/m0r9un/seo-search-console-api/master/logo%402x.png)
 
 Python script with Grafana visualization.
 
