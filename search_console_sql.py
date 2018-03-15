@@ -4,23 +4,19 @@
 
 import MySQLdb as my
 
-# -*- coding: utf-8 -*-
-# encoding=utf8
-# module with mysql connections, selections, updates
-
-import MySQLdb as my
-
 def database_connect():
     db = my.connect(host="127.0.0.1",
-                    user="sc_flatfy",
-                    passwd="iUF47f5JRR7u9PFy",
-                    db="sCF",
+                    user="user",
+                    passwd="password",
+                    db="DataBase",
                     charset="utf8",
                     use_unicode=True
                     )
     db.autocommit = True
     return db
 
+
+#choosing date from calendar
 def choose_date():
     db = database_connect()
     # prepare a cursor object using cursor() method
@@ -47,6 +43,7 @@ def choose_date():
         db.close()
 
 
+#update downloaded status when all data downloaded from SC for this day
 def update_date_status(endDate):
     db = database_connect()
     # prepare a cursor object using cursor() method
@@ -66,6 +63,8 @@ def update_date_status(endDate):
     # disconnect from server
     db.close()
 
+    
+#choose SC API data
 def choose_property():
     db = database_connect()
     cursor = db.cursor()
@@ -91,6 +90,7 @@ def choose_property():
         db.close()
 
 
+#check if not all data was downloaded for this day in SC
 def check_not_downloaded_status():
     db = database_connect()
     cursor = db.cursor()
