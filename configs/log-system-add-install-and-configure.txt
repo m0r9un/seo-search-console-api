@@ -1,0 +1,86 @@
+Install Filebeat
+curl -L -O https://artifacts.elastic.co/downloads/beats/filebeat/filebeat-5.5.1-amd64.deb
+sudo dpkg -i filebeat-5.5.1-amd64.deb
+
+Install Logstash
+wget -qO - https://packages.elastic.co/GPG-KEY-elasticsearch | sudo apt-key add -
+echo "deb https://packages.elastic.co/logstash/2.2/debian stable main" | sudo tee -a /etc/apt/sources.list
+sudo apt-get update
+sudo apt-get install logstash=1:2.2.4-1
+
+Config filebeat
+/etc/filebeat/filebeat.yml
+
+filebeat.prospectors:
+  - input_type: log
+    paths:
+      - <path>access.log*
+    exclude_files: [".gz$"]
+    document_type: nginx-access
+  - input_type: log
+    paths:
+      - <path>error.log*
+    exclude_files: [".gz$"]
+    document_type: nginx-error
+output.logstash:
+  hosts: ["0.0.0.0:5044"]
+
+
+Config logstash
+/etc/logstash/conf.d/input.conf
+
+input {
+  beats {
+    port => 5044
+  }
+}
+/etc/logstash/conf.d/filters.conf
+
+filter {
+  if [type] == "nginx-error" {
+    grok {
+      match => { "message" => ["%{DATA:[nginx][error][time]} \[%{DATA:[nginx][error][level]}\] %{NUMBER:[nginx][error][pid]}#%{NUMBER:[nginx][error][tid]}: (\*%{NUMBER:[nginx][error][connection_id]} )?%{GREEDYDATA:[nginx][error][message]}"] }
+      remove_field => "message"
+    }
+    date {
+      match => [ "[nginx][error][time]", "YYYY/MM/dd H:m:s" ]
+      remove_field => "[nginx][error][time]"
+    }
+  } else if [type] == "nginx-access" {
+    grok {
+      match => { "message" => ["%{IPORHOST:[nginx][access][remote_ip]} - %{DATA:[nginx][access][user_name]} \[%{HTTPDATE:[nginx][access][time]}\] \"%{WORD:[nginx][access][method]} %{DATA:[nginx][access][url]} HTTP/%{NUMBER:[nginx][access][http_version]}\" %{NUMBER:[nginx][access][response_code]} %{NUMBER:[nginx][access][body_sent][bytes]} \"%{DATA:[nginx][access][referrer]}\" \"%{DATA:[nginx][access][agent]}\""] }
+      remove_field => "message"
+    }
+    date {
+      match => [ "[nginx][access][time]", "dd/MMM/YYYY:H:m:s Z" ]
+      remove_field => "[nginx][access][time]"
+    }
+    useragent {
+      source => "[nginx][access][agent]"
+      target => "[nginx][access][user_agent]"
+      remove_field => "[nginx][access][agent]"
+    }
+    geoip {
+      source => "[nginx][access][remote_ip]"
+      target => "[nginx][access][geoip]"
+    }
+  }
+}
+
+
+
+/etc/logstash/conf.d/output.conf
+output {
+  elasticsearch {
+    hosts => ["<es_host>:9200"]
+    manage_template => false
+    index => "%{[@metadata][beat]}-%{+YYYY.MM}"
+    document_type => "%{[@metadata][type]}"
+  }
+}
+
+Run:
+sudo service logstash configtest
+sudo service logstash start
+sudo service filebeat start
+всі змінні <some_var> лише замінити на власні lun-01 файли/хости
