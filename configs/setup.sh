@@ -6,7 +6,7 @@ swapon /swap
 echo '/swap none swap sw 0 0' >> /etc/fstab
 
 sudo apt-get install mailutils -y
-sudo apt-get install postfix
+sudo apt-get install postfix -y
 cp /root/seo-search-console-api/configs/main.cf /etc/postfix/main.cf
 /etc/init.d/postfix restart
 cp /root/seo-search-console-api/configs/aliases /etc/
@@ -19,8 +19,8 @@ echo "percona-server-server-5.6 percona-server-server/root_password password roo
     && echo "percona-server-server-5.6 percona-server-server/root_password_again password flatfy" | debconf-set-selections \
     && DEBIAN_FRONTEND=noninteractive apt-get install -qq -y percona-server-server-5.7 percona-server-client-5.7
 
-sudo apt-get install python-mysqldb
-sudo apt-get install python-pip
+sudo apt-get install python-mysqldb -y
+sudo apt-get install python-pip -y
 
 sudo pip install --upgrade google-api-python-client
 sudo pip install httplib2
