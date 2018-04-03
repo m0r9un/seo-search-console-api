@@ -14,3 +14,5 @@
 9. Save "Service account ID" and p12 key file
 10. Add data to the table search_console_property
 11. p12 file must be in the same folder as main.py 
+12. You must add your service emeail to GSC users with full access
+13. Add your website in API > Credentials > Domain verification tab
