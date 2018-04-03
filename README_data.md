@@ -6,7 +6,7 @@ Example:
 
 ```
 id	property_uri	service_account	key_file
-1	https://flatfy.com/	google-search-api-flatfy@some-word-numbers.iam.gserviceaccount.com	GoogleAPIsFlatfy.p12
+1	https://flatfy.com/	google-search-api-flatfy@some-word-numbers.iam.gserviceaccount.com	/root/seo-search-console-api/GoogleAPIsFlatfy.p12
 ```
 
 ## search_console_calendar table
