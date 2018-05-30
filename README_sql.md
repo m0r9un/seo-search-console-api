@@ -20,7 +20,7 @@ CHARACTER SET utf8
 COLLATE utf8_general_ci;
 ```
 
-### Календарик пинарик для отслеживания сполного скачивания данных по стране в случае возникновения ошибок API
+### Календарик пинарик для отслеживания полного скачивания данных по сайту в случае возникновения ошибок API
 
 ```sql
 CREATE TABLE DataBase.search_console_calendar (
@@ -82,7 +82,7 @@ CHARACTER SET utf8
 COLLATE utf8_general_ci;
 ```
 
-### Connect to databese with Sequql Pro or other softwear
+### Connect to databese with Sequel Pro or other softwear
 1) mysql -u root -p
 2) standart pass: flatfy
 3) use mysql;
