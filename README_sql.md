@@ -82,7 +82,7 @@ CHARACTER SET utf8
 COLLATE utf8_general_ci;
 ```
 
-### Connect to databese with Sequel Pro or other softwear
+### Connect to database with Sequel Pro or other softwear
 1) mysql -u root -p
 2) standart pass: flatfy
 3) use mysql;
